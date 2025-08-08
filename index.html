@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lư Đồng Thắp Hương</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #CD853F 100%);
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #8B0000;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .temple-section {
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temple-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, #87CEEB 0%, #F0E68C 50%, #8B4513 100%);
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .temple-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Lư đồng */
+        .incense-burner {
+            position: relative;
+            width: 200px;
+            height: 250px;
+            margin: 20px auto;
+            perspective: 1000px;
+        }
+
+        .burner-base {
+            position: absolute;
+            width: 120px;
+            height: 40px;
+            background: linear-gradient(135deg, #B8860B, #DAA520, #FFD700);
+            border-radius: 60px 60px 20px 20px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 
+                0 5px 15px rgba(0,0,0,0.4),
+                inset 0 2px 4px rgba(255,255,255,0.3);
+        }
+
+        .burner-body {
+            position: absolute;
+            width: 100px;
+            height: 80px;
+            background: linear-gradient(135deg, #B8860B, #DAA520);
+            border-radius: 50px;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 
+                0 8px 20px rgba(0,0,0,0.4),
+                inset 0 3px 6px rgba(255,255,255,0.3);
+        }
+
+        .burner-body::before {
+            content: '龍';
+            position: absolute;
+            font-size: 24px;
+            color: #8B0000;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .burner-top {
+            position: absolute;
+            width: 80px;
+            height: 30px;
+            background: linear-gradient(135deg, #CD853F, #DEB887);
+            border-radius: 40px;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .incense-sticks {
+            position: absolute;
+            bottom: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 100px;
+        }
+
+        .stick {
+            position: absolute;
+            width: 3px;
+            height: 80px;
+            background: linear-gradient(180deg, #8B4513, #654321);
+            border-radius: 2px;
+        }
+
+        .stick:nth-child(1) { left: 20px; }
+        .stick:nth-child(2) { left: 28px; }
+        .stick:nth-child(3) { left: 36px; }
+
+        .stick.burning {
+            animation: burning 2s ease-in-out infinite;
+        }
+
+        .stick.burning::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -2px;
+            width: 7px;
+            height: 7px;
+            background: radial-gradient(circle, #FF4500, #FF6347);
+            border-radius: 50%;
+            animation: flicker 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.8; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes burning {
+            0%, 100% { transform: rotate(-1deg); }
+            50% { transform: rotate(1deg); }
+        }
+
+        /* Khói */
+        .smoke {
+            position: absolute;
+            bottom: 220px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            pointer-events: none;
+        }
+
+        .smoke-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, rgba(200,200,200,0.6), transparent);
+            border-radius: 50%;
+            animation: smokeRise 3s ease-out infinite;
+        }
+
+        .smoke-particle:nth-child(1) {
+            left: 30px;
+            animation-delay: 0s;
+        }
+
+        .smoke-particle:nth-child(2) {
+            left: 45px;
+            animation-delay: 0.5s;
+        }
+
+        .smoke-particle:nth-child(3) {
+            left: 60px;
+            animation-delay: 1s;
+        }
+
+        @keyframes smokeRise {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(0.5);
+            }
+            20% {
+                opacity: 1;
+                transform: translateY(-20px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-80px) scale(1.5);
+            }
+        }
+
+        /* Nhân vật thắp hương */
+        .character {
+            position: absolute;
+            left: -80px;
+            bottom: 50px;
+            width: 60px;
+            height: 120px;
+            transform: translateX(-100px);
+            transition: transform 2s ease-in-out;
+            z-index: 10;
+        }
+
+        .character.active {
+            transform: translateX(0);
+        }
+
+        .char-head {
+            position: absolute;
+            width: 25px;
+            height: 30px;
+            background: linear-gradient(135deg, #FDBCB4, #FFB6C1);
+            border-radius: 50% 50% 45% 45%;
+            top: 10px;
+            left: 17px;
+            border: 2px solid #E6967A;
+        }
+
+        .char-hair {
+            position: absolute;
+            width: 28px;
+            height: 12px;
+            background: #2F4F4F;
+            border-radius: 14px 14px 6px 6px;
+            top: 8px;
+            left: 16px;
+        }
+
+        .char-eyes {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #333;
+            border-radius: 50%;
+            top: 18px;
+        }
+
+        .char-left-eye { left: 20px; }
+        .char-right-eye { right: 20px; }
+
+        .char-body {
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            background: linear-gradient(135deg, #8B0000, #DC143C);
+            border-radius: 10px;
+            top: 35px;
+            left: 20px;
+        }
+
+        .char-arm {
+            position: absolute;
+            width: 6px;
+            height: 25px;
+            background: linear-gradient(135deg, #FDBCB4, #FFB6C1);
+            border-radius: 3px;
+            top: 40px;
+        }
+
+        .char-left-arm {
+            left: 12px;
+            transform: rotate(-30deg);
+            transform-origin: top;
+        }
+
+        .char-right-arm {
+            right: 12px;
+            transform: rotate(30deg);
+            transform-origin: top;
+        }
+
+        .char-legs {
+            position: absolute;
+            width: 8px;
+            height: 30px;
+            background: #2F4F4F;
+            border-radius: 4px;
+            top: 70px;
+        }
+
+        .char-left-leg { left: 16px; }
+        .char-right-leg { right: 16px; }
+
+        /* Nút thắp hương */
+        .incense-button {
+            display: block;
+            margin: 30px auto;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #FF6B35, #F7931E);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .incense-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.6);
+        }
+
+        .incense-button:active {
+            transform: translateY(0);
+        }
+
+        .incense-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Bảng ghi danh */
+        .registry-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-height: 600px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .registry-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #8B0000;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .registry-table-container {
+            flex: 1;
+            overflow-y: auto;
+            border: 2px solid #DDD;
+            border-radius: 10px;
+        }
+
+        .registry-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .registry-table th {
+            background: linear-gradient(135deg, #8B0000, #DC143C);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .registry-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #EEE;
+            transition: background-color 0.3s ease;
+        }
+
+        .registry-table tr:nth-child(even) {
+            background: #F9F9F9;
+        }
+
+        .registry-table tr:hover {
+            background: #FFF3CD;
+        }
+
+        .registry-count {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #8B0000;
+        }
+
+        /* Popup ghi danh */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-overlay.active {
+            display: flex;
+        }
+
+        .popup {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .popup-overlay.active .popup {
+            transform: scale(1);
+        }
+
+        .popup h2 {
+            color: #8B0000;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .popup input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #DDD;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .popup input:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .popup-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .popup-btn.confirm {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .popup-btn.confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .popup-btn.cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .popup-btn.cancel:hover {
+            background: #5a6268;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .incense-burner {
+                transform: scale(0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ Lư Đồng Thắp Hương 🏛️</h1>
+            <p>Thành tâm cầu nguyện - Phước lành đầy nhà</p>
+        </div>
+
+        <div class="main-content">
+            <div class="temple-section">
+                <div class="temple-background"></div>
+                <div class="temple-content">
+                    <h2 style="text-align: center; margin-bottom: 20px; color: #8B0000;">🙏 Điện Thờ 🙏</h2>
+                    
+                    <div class="incense-burner">
+                        <div class="burner-base"></div>
+                        <div class="burner-body"></div>
+                        <div class="burner-top"></div>
+                        <div class="incense-sticks" id="incenseSticks">
+                            <div class="stick"></div>
+                            <div class="stick"></div>
+                            <div class="stick"></div>
+                        </div>
+                        <div class="smoke" id="smoke" style="opacity: 0;">
+                            <div class="smoke-particle"></div>
+                            <div class="smoke-particle"></div>
+                            <div class="smoke-particle"></div>
+                        </div>
+                    </div>
+
+                    <div class="character" id="character">
+                        <div class="char-hair"></div>
+                        <div class="char-head">
+                            <div class="char-eyes char-left-eye"></div>
+                            <div class="char-eyes char-right-eye"></div>
+                        </div>
+                        <div class="char-body"></div>
+                        <div class="char-arm char-left-arm"></div>
+                        <div class="char-arm char-right-arm"></div>
+                        <div class="char-legs char-left-leg"></div>
+                        <div class="char-legs char-right-leg"></div>
+                    </div>
+
+                    <button class="incense-button" id="incenseBtn">
+                        🔥 Thắp Hương Cầu Nguyện 🔥
+                    </button>
+
+                    <div style="text-align: center; color: #8B0000; font-style: italic;">
+                        "Lòng thành tâm cảm, trời đất cũng cảm thông"
+                    </div>
+                </div>
+            </div>
+
+            <div class="registry-section">
+                <h2 class="registry-title">📜 Sổ Ghi Danh Thắp Hương 📜</h2>
+                <div class="registry-table-container">
+                    <table class="registry-table">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên</th>
+                                <th>Thời gian</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registryTableBody">
+                            <tr>
+                                <td colspan="3" style="text-align: center; color: #666; font-style: italic;">
+                                    Chưa có ai ghi danh...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="registry-count" id="registryCount">
+                    Tổng số người đã thắp hương: <span id="totalCount">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup ghi danh -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <h2>🙏 Ghi Danh Thắp Hương</h2>
+            <p style="margin-bottom: 20px; color: #666;">
+                Xin mời ghi lại tên để lưu niệm việc thắp hương cầu nguyện
+            </p>
+            <input 
+                type="text" 
+                id="nameInput" 
+                placeholder="Nhập tên của bạn..."
+                maxlength="50"
+            >
+            <div class="popup-buttons">
+                <button class="popup-btn confirm" id="confirmBtn">
+                    ✅ Xác nhận
+                </button>
+                <button class="popup-btn cancel" id="cancelBtn">
+                    ❌ Hủy bỏ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dữ liệu ghi danh (lưu trong memory)
+        let registryData = [];
+        let isIncenseBurning = false;
+
+        // Các element
+        const incenseBtn = document.getElementById('incenseBtn');
+        const popupOverlay = document.getElementById('popupOverlay');
+        const nameInput = document.getElementById('nameInput');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const character = document.getElementById('character');
+        const incenseSticks = document.getElementById('incenseSticks');
+        const smoke = document.getElementById('smoke');
+        const registryTableBody = document.getElementById('registryTableBody');
+        const totalCount = document.getElementById('totalCount');
+
+        // Event listeners
+        incenseBtn.addEventListener('click', startIncenseRitual);
+        confirmBtn.addEventListener('click', confirmRegistry);
+        cancelBtn.addEventListener('click', closePopup);
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') confirmRegistry();
+        });
+
+        // Bắt đầu nghi lễ thắp hương
+        function startIncenseRitual() {
+            if (isIncenseBurning) return;
+            
+            showPopup();
+        }
+
+        // Hiển thị popup
+        function showPopup() {
+            popupOverlay.classList.add('active');
+            nameInput.focus();
+            nameInput.value = '';
+        }
+
+        // Đóng popup
+        function closePopup() {
+            popupOverlay.classList.remove('active');
+        }
+
+        // Xác nhận ghi danh
+        function confirmRegistry() {
+            const name = nameInput.value.trim();
+            
+            if (!name) {
+                alert('Vui lòng nhập tên!');
+                nameInput.focus();
+                return;
+            }
+
+            // Thêm vào danh sách
+            const entry = {
+                id: Date.now(),
+                name: name,
+                timestamp: new Date()
+            };
+            
+            registryData.unshift(entry); // Thêm vào đầu danh sách
+            
+            // Cập nhật bảng
+            updateRegistryTable();
+            
+            // Bắt đầu animation thắp hương
+            performIncenseRitual();
+            
+            // Đóng popup
+            closePopup();
+        }
+
+        // Thực hiện nghi lễ thắp hương
+        function performIncenseRitual() {
+            isIncenseBurning = true;
+            incenseBtn.disabled = true;
+            incenseBtn.textContent = '🔥 Đang thắp hương... 🔥';
+
+            // Animation nhân vật di chuyển
+            character.classList.add('active');
+
+            // Sau 2 giây, bắt đầu đốt hương
+            setTimeout(() => {
+                // Thắp hương
+                const sticks = incenseSticks.querySelectorAll('.stick');
+                sticks.forEach((stick, index) => {
+                    setTimeout(() => {
+                        stick.classList.add('burning');
+                    }, index * 200);
+                });
+
+                // Hiển thị khói
+                setTimeout(() => {
+                    smoke.style.opacity = '1';
+                }, 600);
+
+            }, 2000);
+
+            // Sau 8 giây, kết thúc nghi lễ
+            setTimeout(() => {
+                endIncenseRitual();
+            }, 8000);
+        }
+
+        // Kết thúc nghi lễ
+        function endIncenseRitual() {
+            // Ẩn nhân vật
+            character.classList.remove('active');
+            
+            // Reset button
+            setTimeout(() => {
+                isIncenseBurning = false;
+                incenseBtn.disabled = false;
+                incenseBtn.textContent = '🔥 Thắp Hương Cầu Nguyện 🔥';
+            }, 2000);
+        }
+
+        // Cập nhật bảng ghi danh
+        function updateRegistryTable() {
+            if (registryData.length === 0) {
+                registryTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: #666; font-style: italic;">
+                            Chưa có ai ghi danh...
+                        </td>
+                    </tr>
+                `;
+            } else {
+                registryTableBody.innerHTML = registryData.map((entry, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td style="font-weight: bold; color: #8B0000;">${entry.name}</td>
+                        <td>${formatDateTime(entry.timestamp)}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            totalCount.textContent = registryData.length;
+        }
+
+        // Format thời gian
+        function formatDateTime(date) {
+            return date.toLocaleDateString('vi-VN') + ' ' + 
+                   date.toLocaleTimeString('vi-VN', { 
+                       hour: '2-digit', 
+                       minute: '2-digit' 
+                   });
+        }
+
+        // Đóng popup khi click bên ngoài
+        popupOverlay.addEventListener('click', (e) => {
+            if (e.target === popupOverlay) {
+                closePopup();
+            }
+        });
+
+        // Khởi tạo
+        updateRegistryTable();
+    </script>
+</body>
+</html>
